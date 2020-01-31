@@ -8,6 +8,7 @@ export class Comment {
      */
     initListeners() {
         this.initSaveButtonListener();
+        this.initClearButtonListener();
         this.initEditButtonsListener();
         this.initReplyButtonsListener();
         this.toggleReplyButtonsListener();
@@ -46,9 +47,21 @@ export class Comment {
          * Init save button listener
          */
         initSaveButtonListener() {
-            $('.uc-comments #uc-save').on('click', (event) => {
+            $('.uc-comments .save-btn').on('click', (event) => {
                 // Save comment
                 this.save();
+            })
+        }
+
+        /**
+         * Init clear button listener
+         */
+        initClearButtonListener() {
+            $('.uc-comments .clear-btn').on('click', (event) => {
+                this.clear();
+
+                $(".uc-comments #uc-content").trigger('autoresize'); // TODO: Not working =/
+                $(".uc-comments #uc-content").focus();
             })
         }
     
@@ -67,6 +80,7 @@ export class Comment {
                 $("meta[name='comment-id']").attr('content', commentId);
                 $(".uc-comments #uc-content").val(content);
                 $(".uc-comments #uc-content").trigger('autoresize'); // TODO: Not working =/
+                $(".uc-comments #uc-content").focus();
 
                 $(".uc-comments #uc-cont-lbl").text("Edit your comment");
             })
@@ -83,6 +97,7 @@ export class Comment {
                 var user = $("#uc-comment-" + replyId + " .uc-user").first().text().trim();
                 
                 $("meta[name='parent-id']").attr('content', replyId);
+                $(".uc-comments #uc-content").focus();
 
                 $(".uc-comments #uc-cont-lbl").text("Your reply to @" + user);
             })

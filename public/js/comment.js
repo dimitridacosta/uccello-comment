@@ -10729,6 +10729,7 @@ function () {
     key: "initListeners",
     value: function initListeners() {
       this.initSaveButtonListener();
+      this.initClearButtonListener();
       this.initEditButtonsListener();
       this.initReplyButtonsListener();
       this.toggleReplyButtonsListener();
@@ -10773,9 +10774,26 @@ function () {
     value: function initSaveButtonListener() {
       var _this = this;
 
-      $('.uc-comments #uc-save').on('click', function (event) {
+      $('.uc-comments .save-btn').on('click', function (event) {
         // Save comment
         _this.save();
+      });
+    }
+    /**
+     * Init clear button listener
+     */
+
+  }, {
+    key: "initClearButtonListener",
+    value: function initClearButtonListener() {
+      var _this2 = this;
+
+      $('.uc-comments .clear-btn').on('click', function (event) {
+        _this2.clear();
+
+        $(".uc-comments #uc-content").trigger('autoresize'); // TODO: Not working =/
+
+        $(".uc-comments #uc-content").focus();
       });
     }
     /**
@@ -10785,10 +10803,10 @@ function () {
   }, {
     key: "initEditButtonsListener",
     value: function initEditButtonsListener() {
-      var _this2 = this;
+      var _this3 = this;
 
       $('.uc-comments .edit-btn').on('click', function (event) {
-        _this2.clear();
+        _this3.clear();
 
         var commentId = $(event.currentTarget).data('commentId');
         var content = $("#uc-comment-" + commentId + " .uc-comment-content").first().text().trim();
@@ -10797,6 +10815,7 @@ function () {
         $(".uc-comments #uc-content").val(content);
         $(".uc-comments #uc-content").trigger('autoresize'); // TODO: Not working =/
 
+        $(".uc-comments #uc-content").focus();
         $(".uc-comments #uc-cont-lbl").text("Edit your comment");
       });
     }
@@ -10807,14 +10826,15 @@ function () {
   }, {
     key: "initReplyButtonsListener",
     value: function initReplyButtonsListener() {
-      var _this3 = this;
+      var _this4 = this;
 
       $('.uc-comments .reply-btn').on('click', function (event) {
-        _this3.clear();
+        _this4.clear();
 
         var replyId = $(event.currentTarget).data('commentId');
         var user = $("#uc-comment-" + replyId + " .uc-user").first().text().trim();
         $("meta[name='parent-id']").attr('content', replyId);
+        $(".uc-comments #uc-content").focus();
         $(".uc-comments #uc-cont-lbl").text("Your reply to @" + user);
       });
     }

@@ -14,8 +14,15 @@
                 <div class="input-field col">
                     <textarea id="uc-content" class="materialize-textarea"></textarea>
                     <label id="uc-cont-lbl" for="uc-content">Your new comment</label>
+                    <a href="javascript:void(0)"
+                        data-tooltip="{{ uctrans('button.clear', $module) }}" 
+                        data-position="bottom" 
+                        class="clear-btn primary-text">
+                        <i class="material-icons">delete</i>
+                    </a>
                 </div>
-                <button class="btn-floating waves-effect waves-light" id="uc-save">
+                <button class="save-btn btn-floating waves-effect waves-light primary"
+                    data-tooltip="{{ uctrans('button.send', $module) }}" >
                     <i class="material-icons right">send</i>
                 </button>
             </div>
@@ -38,7 +45,7 @@
                                 {{ $comment->user->recordLabel }}
                             </div>
                             <div class="col">
-                                {{ (new \Carbon\Carbon($comment->updated_at))->format(config('uccello.format.php.datetime')) }} 
+                                {{ (new \Carbon\Carbon($comment->created_at))->format(config('uccello.format.php.datetime')) }} 
                             </div>
                             @if ($comment->updated_at != $comment->created_at)
                             <div class="col">
@@ -66,7 +73,8 @@
                                     data-tooltip="{{ uctrans('button.delete', $module) }}" 
                                     data-position="top" 
                                     class="delete-btn primary-text" 
-                                    data-config='{"actionType":"link","confirm":true,"dialog":{"title":"{{ uctrans('confirm.button.delete_record', $module) }}"}}'>
+                                    {{-- data-config='{"actionType":"link","confirm":true,"dialog":{"title":"{{ uctrans('confirm.button.delete_record', $module) }}"}}' --}}
+                                    >
                                     <i class="material-icons">delete</i>
                                 </a>
                                 @endif
@@ -96,7 +104,7 @@
                                             {{ $reply->user->recordLabel }}
                                         </div>
                                         <div class="col">
-                                            {{ (new \Carbon\Carbon($reply->updated_at))->format(config('uccello.format.php.datetime')) }} 
+                                            {{ (new \Carbon\Carbon($reply->created_at))->format(config('uccello.format.php.datetime')) }} 
                                         </div>
                                         @if ($reply->updated_at != $reply->created_at)
                                         <div class="col">
@@ -117,7 +125,8 @@
                                                 data-tooltip="{{ uctrans('button.delete', $module) }}" 
                                                 data-position="top" 
                                                 class="delete-btn primary-text" 
-                                                data-config='{"actionType":"link","confirm":true,"dialog":{"title":"{{ uctrans('confirm.button.delete_record', $module) }}"}}'>
+                                                {{-- data-config='{"actionType":"link","confirm":true,"dialog":{"title":"{{ uctrans('confirm.button.delete_record', $module) }}"}}' --}}
+                                                >
                                                 <i class="material-icons">delete</i>
                                             </a>
                                             @endif
@@ -168,13 +177,18 @@
 .uc-comments .uc-main {
     max-width: calc(100% - 68px);
 }
+.uc-comments .uc-comment-header {
+    width: max-content;
+}
 .uc-comments .uc-header .input-field {
     margin: 0px;
     width: calc(100% - 130px);
     max-width: 400px;
 }
-.uc-comments .uc-comment-header {
-    width: max-content;
+.uc-comments .uc-header .clear-btn {
+    bottom: 20px;
+    right: 10px;
+    position: absolute;
 }
 </style>
 
