@@ -25,3 +25,15 @@ To add a comment widget, add the flowing line in any blade view of your Uccello 
 The parameters are:
 - `title`: Title of the comment card
 - `entity`: Uccello entity to comment on
+
+#### Config
+
+You can add the folowing optional setings to your uccello.php config file:
+```php
+'comment' => [
+        'max_height' => 450,
+        'show_child' => true,
+        'can_edit_parent' => true,
+        'can_delete_parent' => false,
+]
+```

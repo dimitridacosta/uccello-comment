@@ -65,7 +65,7 @@ class Comment extends Model implements Searchable
 
 
     /**
-     * Get the entity that owns the movement.
+     * Get the entity that owns the comment.
      */
     public function getEntityAttribute()
     {
@@ -74,25 +74,57 @@ class Comment extends Model implements Searchable
     }
 
     /**
-     * Get the parent comment that owns the movement.
+     * Get the parent comment that owns the comment.
      */
     public function parent()
     {
         return $this->belongsTo('Uccello\Comment\Models\Comment');
     }
-    
+
     /**
-     * Get the user that owns the movement.
+     * Get the user that owns the comment.
      */
     public function user()
     {
         return $this->belongsTo('App\User');
     }
 
-    public function replyCount()
+    protected $repliesCache = null;
+
+    /**
+     * Get the replies (childen comments).
+     */
+    public function getRepliesAttribute()
     {
-        return $this->replyCountCache ?
-                $this->replyCountCache :
-                $this->replyCountCache = static::where('parent_id', $this->id)->count();
+        if(!$this->repliesCache)
+        {
+            $query = static::where('parent_id', $this->id)
+                            // ->InDomain($domain)
+                            ->orderby('created_at', 'desc');
+    
+            if(config('uccello.comment.can_delete_parent', false))
+            {
+                $query = $query->withTrashed();
+            }
+
+            $this->repliesCache = $query->get();
+        }
+
+        return $this->repliesCache;
+    }
+    
+    public static function getAll($entity, $domain)
+    {
+        $query = static::where('entity_id', $entity->uuid)
+                        // ->InDomain($domain)
+                        ->whereNull('parent_id')
+                        ->orderby('created_at', 'desc');
+
+        if(config('uccello.comment.can_delete_parent', false))
+        {
+            $query = $query->withTrashed();
+        }
+
+        return $query->get();
     }
 }

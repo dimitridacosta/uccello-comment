@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
     // Views
     $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'comment');
 
-    // Translations   // TODO: Not working...
+    // Translations
     $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'comment');
 
     // Routes
@@ -29,25 +29,5 @@ class AppServiceProvider extends ServiceProvider
     
     // Migrations
     $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations/');
-
-
-    // // Publish assets
-    // $this->publishes([
-    //   __DIR__ . '/../../public' => public_path('vendor/uccello/crm'),
-    // ], 'crm-assets');
-
-    // // Publish config
-    // $this->publishes([
-    //   __DIR__ . '/../../config/crm.php' => config_path('crm.php')
-    // ], 'crm-config');
-  }
-
-  public function register()
-  {
-    // // Config
-    // $this->mergeConfigFrom(
-    //   __DIR__ . '/../../config/comment.php',
-    //   'crm'
-    // );
   }
 }

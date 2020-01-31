@@ -1,6 +1,8 @@
 <div class="card">
     <div class="card-content">
+        @if($config['title'])
         <span class="card-title">{!! $config['title'] !!}</span>
+        @endif
 
         <div class="uc-comments">
             <div class="uc-header row">
@@ -27,10 +29,8 @@
                 </button>
             </div>
             <div class="uc-content">
-                @foreach(Uccello\Comment\Models\Comment::where('entity_id', $config['entity']->uuid)
-                                                        ->whereNull('parent_id')
-                                                        ->orderby('created_at', 'desc')
-                                                        ->get() as $comment)
+                @foreach(Uccello\Comment\Models\Comment::getAll($config['entity'], $domain) as $comment)
+                @if(!$comment->deleted_at || $comment->replies->count())
                 <div class="uc-comment row" id="uc-comment-{{ $comment->id }}" style="margin-bottom: 20px">
                     <div class="user-image col">
                         @if (in_array($comment->user->avatarType, [ 'image', 'gravatar' ]))
@@ -40,19 +40,20 @@
                         @endif
                     </div>
                     <div class="uc-main col">
-                        <div class="uc-comment-header row">
+                        <div class="uc-comment-header row{{$comment->deleted_at ? ' uc-deleted' : ''}}">
                             <div class="col uc-user">
                                 {{ $comment->user->recordLabel }}
                             </div>
                             <div class="col">
                                 {{ (new \Carbon\Carbon($comment->created_at))->format(config('uccello.format.php.datetime')) }} 
                             </div>
-                            @if ($comment->updated_at != $comment->created_at)
+                            @if (!$comment->deleted_at && $comment->updated_at != $comment->created_at)
                             <div class="col">
                                 (Modifié)
                                 {{-- TODO: Translation --}}
                             </div>
                             @endif
+                            @if(!$comment->deleted_at)
                             <div class="col">
                                 <a href="javascript:void(0)"
                                 data-tooltip="{{ uctrans('button.reply', $module) }}"
@@ -62,6 +63,7 @@
                                 <i class="material-icons">reply</i>
                                 </a>
                                 @if (auth()->user()->id == $comment->user->id)
+                                @if(!$comment->replies->count() || config('uccello.comment.can_edit_parent', true))
                                 <a href="javascript:void(0)"
                                     data-tooltip="{{ uctrans('button.edit', $module) }}"
                                     data-position="top"
@@ -69,7 +71,8 @@
                                     class="edit-btn primary-text">
                                     <i class="material-icons">edit</i>
                                 </a>
-                                @if(!$comment->replyCount())
+                                @endif
+                                @if(!$comment->replies->count() || config('uccello.comment.can_delete_parent', false))
                                 <a href="javascript:void(0)"
                                     data-tooltip="{{ uctrans('button.delete', $module) }}" 
                                     data-position="top" 
@@ -82,17 +85,22 @@
                                 @endif
                                 @endif
                             </div>
+                            @endif
                         </div>
+                        @if($comment->deleted_at)
+                        <div class="uc-comment-content uc-deleted">
+                            (Commentaire supprimé)
+                        </div>
+                        @else
                         <div class="uc-comment-content">
                             {!! nl2br($comment->content) !!}
                         </div>
-                        @if($comment->replyCount())
-                        <a class="uc-toggle-reply waves-effect btn-flat" data-comment-id={{ $comment->id }}>▴ HIDE {{$comment->replyCount()}} REPLIES</a>
-                        <a class="uc-toggle-reply waves-effect btn-flat" data-comment-id={{ $comment->id }} style="display:none">▾ SHOW {{$comment->replyCount()}} REPLIES</a>
-                        <div class="uc-reply uc-toggle-reply">
-                            @foreach(Uccello\Comment\Models\Comment::where('parent_id', $comment->id)
-                                                                    ->orderby('created_at', 'desc')
-                                                                    ->get() as $reply)
+                        @endif
+                        @if($comment->replies->count())
+                        <a class="uc-toggle-reply btn-flat" data-comment-id={{ $comment->id }} @if(!config('uccello.comment.show_child', true))style="display:none"@endif>▴ HIDE {{$comment->replies->count()}} REPLIES</a>
+                        <a class="uc-toggle-reply btn-flat" data-comment-id={{ $comment->id }} @if(config('uccello.comment.show_child', true))style="display:none"@endif>▾ SHOW {{$comment->replies->count()}} REPLIES</a>
+                        <div class="uc-reply uc-toggle-reply" @if(!config('uccello.comment.show_child', true))style="display:none"@endif>
+                            @foreach($comment->replies as $reply)
                             <div class="uc-comment row" id="uc-comment-{{ $reply->id }}" style="margin-bottom: 20px">
                                 <div class="user-image col">
                                     @if (in_array($reply->user->avatarType, [ 'image', 'gravatar' ]))
@@ -124,7 +132,7 @@
                                                 class="edit-btn primary-text">
                                                 <i class="material-icons">edit</i>
                                             </a>
-                                            @if(!$reply->replyCount())
+                                            @if(!$reply->replies->count())
                                             <a href="javascript:void(0)"
                                                 data-tooltip="{{ uctrans('button.delete', $module) }}" 
                                                 data-position="top" 
@@ -149,6 +157,7 @@
                     </div>
                     
                 </div>
+                @endif
                 @endforeach
             </div>
         </div>
@@ -178,7 +187,7 @@
 }
 .uc-comments .uc-content {
     overflow-y: auto;
-    max-height: 450px;
+    max-height: {{config('uccello.comment.max_height', 450)}}px;
     padding-top: 20px;
 }
 .uc-comments .uc-main {
@@ -199,6 +208,10 @@
     bottom: 20px;
     right: 10px;
     position: absolute;
+}
+.uc-comments .uc-deleted {
+    color: grey;
+    font-style: italic;
 }
 </style>
 

@@ -15,8 +15,9 @@ class CommentController extends Controller
         {
             $comment = Comment::find($request->id);
 
-            // Check user uwnership: if not the owner then create a new comment
-            if ($comment->user_id != auth()->user()->id)
+            // Check user uwnership & config: if not the owner then create a new comment
+            if ($comment->user_id != auth()->user()->id 
+                || !config('uccello.comment.can_edit_parent', true))
             {
                 $comment = new Comment();
             }
@@ -53,7 +54,24 @@ class CommentController extends Controller
             // Check user uwnership
             if ($comment->user_id == auth()->user()->id)
             {
-                $comment->delete();
+                if(config('uccello.comment.can_delete_parent', false))
+                {
+                    // Check if comment has replies
+                    if($comment->replies->count())
+                    {
+                        $comment->content = '_DELETED_';
+                        $comment->save();
+                        $comment->delete();
+                    }
+                    else
+                    {
+                        $comment->forceDelete();
+                    }
+                }
+                else
+                {
+                    $comment->delete();
+                }
                 
                 return 'success';
             }

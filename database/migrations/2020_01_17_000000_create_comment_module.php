@@ -74,7 +74,7 @@ class CreateCommentModule extends Migration
             'name' => 'comment',
             'icon' => 'textsms',
             'model_class' => 'Uccello\Comment\Models\Comment',
-            'data' => null
+            'data' => ['package' => 'uccello/comment']
         ]);
         $module->save();
         return $module;
