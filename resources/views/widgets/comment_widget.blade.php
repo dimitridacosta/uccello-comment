@@ -69,23 +69,26 @@
                                     class="edit-btn primary-text">
                                     <i class="material-icons">edit</i>
                                 </a>
+                                @if(!$comment->replyCount())
                                 <a href="javascript:void(0)"
                                     data-tooltip="{{ uctrans('button.delete', $module) }}" 
                                     data-position="top" 
+                                    data-comment-id={{ $comment->id }}
                                     class="delete-btn primary-text" 
                                     {{-- data-config='{"actionType":"link","confirm":true,"dialog":{"title":"{{ uctrans('confirm.button.delete_record', $module) }}"}}' --}}
                                     >
                                     <i class="material-icons">delete</i>
                                 </a>
                                 @endif
+                                @endif
                             </div>
                         </div>
                         <div class="uc-comment-content">
                             {!! nl2br($comment->content) !!}
                         </div>
-                        @if($replyCount = Uccello\Comment\Models\Comment::where('parent_id', $comment->id)->count())
-                        <a class="uc-toggle-reply waves-effect btn-flat" data-comment-id={{ $comment->id }}>▴ HIDE {{$replyCount}} REPLIES</a>
-                        <a class="uc-toggle-reply waves-effect btn-flat" data-comment-id={{ $comment->id }} style="display:none">▾ SHOW {{$replyCount}} REPLIES</a>
+                        @if($comment->replyCount())
+                        <a class="uc-toggle-reply waves-effect btn-flat" data-comment-id={{ $comment->id }}>▴ HIDE {{$comment->replyCount()}} REPLIES</a>
+                        <a class="uc-toggle-reply waves-effect btn-flat" data-comment-id={{ $comment->id }} style="display:none">▾ SHOW {{$comment->replyCount()}} REPLIES</a>
                         <div class="uc-reply uc-toggle-reply">
                             @foreach(Uccello\Comment\Models\Comment::where('parent_id', $comment->id)
                                                                     ->orderby('created_at', 'desc')
@@ -121,14 +124,17 @@
                                                 class="edit-btn primary-text">
                                                 <i class="material-icons">edit</i>
                                             </a>
+                                            @if(!$reply->replyCount())
                                             <a href="javascript:void(0)"
                                                 data-tooltip="{{ uctrans('button.delete', $module) }}" 
                                                 data-position="top" 
+                                                data-comment-id={{ $reply->id }}
                                                 class="delete-btn primary-text" 
                                                 {{-- data-config='{"actionType":"link","confirm":true,"dialog":{"title":"{{ uctrans('confirm.button.delete_record', $module) }}"}}' --}}
                                                 >
                                                 <i class="material-icons">delete</i>
                                             </a>
+                                            @endif
                                             @endif
                                         </div>
                                     </div>
@@ -151,6 +157,7 @@
 
 @section('extra-meta')
 <meta name="save-url" content="{{ ucroute('uccello.comment.save', $domain) }}">
+<meta name="delete-url" content="{{ ucroute('uccello.comment.delete', $domain) }}">
 <meta name="entity-uuid" content="{{ $config['entity']->uuid }}">
 <meta name="comment-id" content="">
 <meta name="parent-id" content="">
@@ -184,6 +191,9 @@
     margin: 0px;
     width: calc(100% - 130px);
     max-width: 400px;
+}
+.uc-comments .uc-comment-header {
+    width: max-content;
 }
 .uc-comments .uc-header .clear-btn {
     bottom: 20px;

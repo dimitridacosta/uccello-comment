@@ -43,4 +43,22 @@ class CommentController extends Controller
 
         return 'success';
     }
+
+    public function delete(?Domain $domain, Request $request)
+    {
+        if ($request->id) // Edit
+        {
+            $comment = Comment::find($request->id);
+
+            // Check user uwnership
+            if ($comment->user_id == auth()->user()->id)
+            {
+                $comment->delete();
+                
+                return 'success';
+            }
+        }
+
+        return 'error';
+    }
 }

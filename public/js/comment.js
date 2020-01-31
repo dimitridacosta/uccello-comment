@@ -10732,6 +10732,7 @@ function () {
       this.initClearButtonListener();
       this.initEditButtonsListener();
       this.initReplyButtonsListener();
+      this.initDeleteButtonListener();
       this.toggleReplyButtonsListener();
     }
     /**
@@ -10766,6 +10767,31 @@ function () {
       }
     }
     /**
+     * Save current menu
+     */
+
+  }, {
+    key: "delete",
+    value: function _delete(id) {
+      var url = $("meta[name='delete-url']").attr('content');
+      if (!confirm("Delete comment ?")) return; // TODO REMOVE !!!
+
+      if (id != null && id != '') {
+        $.ajax({
+          url: url,
+          method: "post",
+          data: {
+            _token: $("meta[name='csrf-token']").attr('content'),
+            id: id
+          }
+        }).then(function (response) {
+          location.reload();
+        }).fail(function (error) {
+          swal(uctrans.trans('uccello::default.dialog.error.title'), uctrans.trans('uccello::settings.menu_manager.error.save'), "error");
+        });
+      }
+    }
+    /**
      * Init save button listener
      */
 
@@ -10780,8 +10806,8 @@ function () {
       });
     }
     /**
-     * Init clear button listener
-     */
+         * Init clear button listener
+         */
 
   }, {
     key: "initClearButtonListener",
@@ -10797,16 +10823,31 @@ function () {
       });
     }
     /**
+     * Init save button listener
+     */
+
+  }, {
+    key: "initDeleteButtonListener",
+    value: function initDeleteButtonListener() {
+      var _this3 = this;
+
+      $('.uc-comments .delete-btn').on('click', function (event) {
+        var commentId = $(event.currentTarget).data('commentId'); // Save comment
+
+        _this3["delete"](commentId);
+      });
+    }
+    /**
      * Init edit buttons listener
      */
 
   }, {
     key: "initEditButtonsListener",
     value: function initEditButtonsListener() {
-      var _this3 = this;
+      var _this4 = this;
 
       $('.uc-comments .edit-btn').on('click', function (event) {
-        _this3.clear();
+        _this4.clear();
 
         var commentId = $(event.currentTarget).data('commentId');
         var content = $("#uc-comment-" + commentId + " .uc-comment-content").first().text().trim();
@@ -10826,10 +10867,10 @@ function () {
   }, {
     key: "initReplyButtonsListener",
     value: function initReplyButtonsListener() {
-      var _this4 = this;
+      var _this5 = this;
 
       $('.uc-comments .reply-btn').on('click', function (event) {
-        _this4.clear();
+        _this5.clear();
 
         var replyId = $(event.currentTarget).data('commentId');
         var user = $("#uc-comment-" + replyId + " .uc-user").first().text().trim();

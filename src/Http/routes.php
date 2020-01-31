@@ -16,4 +16,7 @@ Route::middleware('web', 'auth')
 
     Route::post($domainParam.'/comment/save', 'CommentController@save')
     ->name('save');
+
+    Route::post($domainParam.'/comment/delete', 'CommentController@delete')
+    ->name('delete');
 });

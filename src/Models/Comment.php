@@ -88,4 +88,11 @@ class Comment extends Model implements Searchable
     {
         return $this->belongsTo('App\User');
     }
+
+    public function replyCount()
+    {
+        return $this->replyCountCache ?
+                $this->replyCountCache :
+                $this->replyCountCache = static::where('parent_id', $this->id)->count();
+    }
 }
