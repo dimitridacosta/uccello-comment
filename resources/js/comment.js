@@ -50,8 +50,6 @@ export class Comment {
     delete(id) {
         let url = $("meta[name='delete-url']").attr('content');
 
-        if (!confirm("Delete comment ?")) return; // TODO REMOVE !!!
-
         if (id != null && id != '') {
             $.ajax({
                 url: url,
@@ -94,12 +92,26 @@ export class Comment {
      * Init save button listener
      */
     initDeleteButtonListener() {
-
         $('.uc-comments .delete-btn').on('click', (event) => {
             var commentId = $(event.currentTarget).data('commentId');
 
-            // Save comment
-            this.delete(commentId);
+            swal({
+                title: uctrans.trans('uccello::default.confirm.dialog.title'),
+                text: uctrans.trans('uccello::default.confirm.button.delete_record'),
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                buttons: [
+                    uctrans.trans('uccello::default.button.no'),
+                    uctrans.trans('uccello::default.button.yes')
+                ],
+            })
+            .then((response) => {
+                if (response === true) {
+                    // Delete comment
+                    this.delete(commentId);
+                }
+            })
         })
     }
 
