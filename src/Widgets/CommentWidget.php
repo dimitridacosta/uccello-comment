@@ -3,6 +3,7 @@
 namespace Uccello\Comment\Widgets;
 
 use Arrilot\Widgets\AbstractWidget;
+use Uccello\Core\Models\Module;
 
 class CommentWidget extends AbstractWidget
 {
@@ -23,7 +24,7 @@ class CommentWidget extends AbstractWidget
 
         return view('comment::widgets.comment_widget', [
             'config' => $this->config,
-            // 'chart' => $chart,
+            'mComment' => Module::where('name', 'comment')->first(),
         ]);
     }
 }

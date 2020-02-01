@@ -120,7 +120,8 @@ export class Comment {
             $(".uc-comments #uc-content").trigger('autoresize'); // TODO: Not working =/
             $(".uc-comments #uc-content").focus();
 
-            $(".uc-comments #uc-cont-lbl").text("Edit your comment");
+            var trans = $(".uc-comments #uc-cont-lbl").data('trans-edit');
+            $(".uc-comments #uc-cont-lbl").text(trans);
         })
     }
     
@@ -137,7 +138,8 @@ export class Comment {
             $("meta[name='parent-id']").attr('content', replyId);
             $(".uc-comments #uc-content").focus();
 
-            $(".uc-comments #uc-cont-lbl").text("Your reply to @" + user);
+            var trans = $(".uc-comments #uc-cont-lbl").data('trans-reply');
+            $(".uc-comments #uc-cont-lbl").text(trans + " @" + user);
         })
     }
     
@@ -163,7 +165,8 @@ export class Comment {
         $(".uc-comments #uc-content").val("");
         $(".uc-comments #uc-content").trigger('autoresize'); // TODO: Not working =/
         
-        $(".uc-comments #uc-cont-lbl").text("Your new comment");
+        var trans = $(".uc-comments #uc-cont-lbl").data('trans-new');
+        $(".uc-comments #uc-cont-lbl").text(trans);
     }
 }
 

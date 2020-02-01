@@ -15,16 +15,22 @@
                 </div>
                 <div class="input-field col">
                     <textarea id="uc-content" class="materialize-textarea"></textarea>
-                    <label id="uc-cont-lbl" for="uc-content">Your new comment</label>
+                    <label id="uc-cont-lbl" 
+                        for="uc-content"
+                        data-trans-new="{{ uctrans('msg.new', $mComment) }}" 
+                        data-trans-edit="{{ uctrans('msg.edit', $mComment) }}" 
+                        data-trans-reply="{{ uctrans('msg.reply', $mComment) }}" >
+                        {{ uctrans('msg.new', $mComment) }}
+                    </label>
                     <a href="javascript:void(0)"
-                        data-tooltip="{{ uctrans('button.clear', $module) }}" 
+                        data-tooltip="{{ uctrans('button.clear', $mComment) }}" 
                         data-position="bottom" 
                         class="clear-btn primary-text">
                         <i class="material-icons">delete</i>
                     </a>
                 </div>
                 <button class="save-btn btn-floating waves-effect waves-light primary"
-                    data-tooltip="{{ uctrans('button.send', $module) }}" >
+                    data-tooltip="{{ uctrans('button.send', $mComment) }}" >
                     <i class="material-icons right">send</i>
                 </button>
             </div>
@@ -49,14 +55,13 @@
                             </div>
                             @if (!$comment->deleted_at && $comment->updated_at != $comment->created_at)
                             <div class="col">
-                                (Modifié)
-                                {{-- TODO: Translation --}}
+                                ({{ uctrans('msg.modified', $mComment) }})
                             </div>
                             @endif
                             @if(!$comment->deleted_at)
                             <div class="col">
                                 <a href="javascript:void(0)"
-                                data-tooltip="{{ uctrans('button.reply', $module) }}"
+                                data-tooltip="{{ uctrans('button.reply', $mComment) }}"
                                 data-position="top"
                                 data-comment-id={{ $comment->id }}
                                 class="reply-btn primary-text">
@@ -65,7 +70,7 @@
                                 @if (auth()->user()->id == $comment->user->id)
                                 @if(!$comment->replies->count() || config('uccello.comment.can_edit_parent', true))
                                 <a href="javascript:void(0)"
-                                    data-tooltip="{{ uctrans('button.edit', $module) }}"
+                                    data-tooltip="{{ uctrans('button.edit', $mComment) }}"
                                     data-position="top"
                                     data-comment-id={{ $comment->id }}
                                     class="edit-btn primary-text">
@@ -74,7 +79,7 @@
                                 @endif
                                 @if(!$comment->replies->count() || config('uccello.comment.can_delete_parent', false))
                                 <a href="javascript:void(0)"
-                                    data-tooltip="{{ uctrans('button.delete', $module) }}" 
+                                    data-tooltip="{{ uctrans('button.delete', $mComment) }}" 
                                     data-position="top" 
                                     data-comment-id={{ $comment->id }}
                                     class="delete-btn primary-text" 
@@ -89,7 +94,7 @@
                         </div>
                         @if($comment->deleted_at)
                         <div class="uc-comment-content uc-deleted">
-                            (Commentaire supprimé)
+                            ({{ uctrans('msg.deleted', $mComment) }})
                         </div>
                         @else
                         <div class="uc-comment-content">
@@ -97,8 +102,12 @@
                         </div>
                         @endif
                         @if($comment->replies->count())
-                        <a class="uc-toggle-reply btn-flat" data-comment-id={{ $comment->id }} @if(!config('uccello.comment.show_child', true))style="display:none"@endif>▴ HIDE {{$comment->replies->count()}} REPLIES</a>
-                        <a class="uc-toggle-reply btn-flat" data-comment-id={{ $comment->id }} @if(config('uccello.comment.show_child', true))style="display:none"@endif>▾ SHOW {{$comment->replies->count()}} REPLIES</a>
+                        <a class="uc-toggle-reply btn-flat" data-comment-id={{ $comment->id }} 
+                            @if(!config('uccello.comment.show_child', true))style="display:none"@endif>
+                            ▴ {{ uctrans('msg.hide', $mComment) }} {{$comment->replies->count()}} {{ uctrans('msg.replies', $mComment) }}</a>
+                        <a class="uc-toggle-reply btn-flat" data-comment-id={{ $comment->id }} 
+                            @if(config('uccello.comment.show_child', true))style="display:none"@endif>
+                            ▾ {{ uctrans('msg.show', $mComment) }} {{$comment->replies->count()}} {{ uctrans('msg.replies', $mComment) }}</a>
                         <div class="uc-reply uc-toggle-reply" @if(!config('uccello.comment.show_child', true))style="display:none"@endif>
                             @foreach($comment->replies as $reply)
                             <div class="uc-comment row" id="uc-comment-{{ $reply->id }}" style="margin-bottom: 20px">
@@ -119,14 +128,13 @@
                                         </div>
                                         @if ($reply->updated_at != $reply->created_at)
                                         <div class="col">
-                                            (Modifié)
-                                            {{-- TODO: Translation --}}
+                                            ({{ uctrans('msg.modified', $mComment) }})
                                         </div>
                                         @endif
                                         <div class="col">
                                             @if (auth()->user()->id == $reply->user->id)
                                             <a href="javascript:void(0)"
-                                                data-tooltip="{{ uctrans('button.edit', $module) }}"
+                                                data-tooltip="{{ uctrans('button.edit', $mComment) }}"
                                                 data-position="top"
                                                 data-comment-id={{ $reply->id }}
                                                 class="edit-btn primary-text">
@@ -134,7 +142,7 @@
                                             </a>
                                             @if(!$reply->replies->count())
                                             <a href="javascript:void(0)"
-                                                data-tooltip="{{ uctrans('button.delete', $module) }}" 
+                                                data-tooltip="{{ uctrans('button.delete', $mComment) }}" 
                                                 data-position="top" 
                                                 data-comment-id={{ $reply->id }}
                                                 class="delete-btn primary-text" 

@@ -74,7 +74,7 @@ class CreateCommentModule extends Migration
             'name' => 'comment',
             'icon' => 'textsms',
             'model_class' => 'Uccello\Comment\Models\Comment',
-            'data' => ['package' => 'uccello/comment']
+            'data' => ['package' => 'uccello/comment', 'admin' => true]
         ]);
         $module->save();
         return $module;
@@ -120,11 +120,11 @@ class CreateCommentModule extends Migration
             'data' => ['rules' => 'required']
         ]);
 
-        // Field entitiy
+        // Field entity
         Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
-            'name' => 'entitiy',
+            'name' => 'entity',
             'uitype_id' => uitype('text')->id,
             'displaytype_id' => displaytype('detail')->id,
             'sequence' => $block->fields()->count(),
